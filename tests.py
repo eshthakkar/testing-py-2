@@ -39,8 +39,13 @@ class PartyTestsDatabase(unittest.TestCase):
     def setUp(self):
         """Stuff to do before every test."""
 
-        self.client = app.test_client()
+    
         app.config['TESTING'] = True
+        self.client = app.test_client()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['RSVP'] = True
 
         # Connect to test database (uncomment when testing database)
         connect_to_db(app, "postgresql:///testdb")
@@ -60,6 +65,9 @@ class PartyTestsDatabase(unittest.TestCase):
         #FIXME: test that the games page displays the game from example_data()
         result = self.client.get("/games")
         self.assertIn("Cranium",result.data)
+
+
+
         
 
 
